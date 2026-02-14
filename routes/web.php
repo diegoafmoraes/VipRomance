@@ -1,7 +1,9 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\FeedController;
+use App\Http\Controllers\PublicProfileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,8 +16,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
+/* Route::get('/', function () {
     return view('welcome');
+}); */
+
+Route::get('/', function () {
+    return auth()->check()
+        ? redirect()->route('home')   // ou dashboard
+        : redirect()->route('login');
 });
 
 Route::get('/dashboard', function () {
@@ -29,3 +37,8 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/home', [FeedController::class, 'index'])->name('home');
+    Route::get('/u/{username}', [PublicProfileController::class, 'show'])->name('profile.public');
+});

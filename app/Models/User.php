@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\Builder;
 
 class User extends Authenticatable
 {
@@ -41,4 +42,20 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    /**
+     * Criar um scope no User
+     *
+     * @param Builder $query
+     * @param self $me
+     * @return Builder
+     */
+    public function scopeReciprocalMatches(Builder $query, self $me): Builder
+    {
+        return $query
+            ->where('id', '!=', $me->id)
+            ->where('is_active', 1)
+            ->where('sex', $me->seeking)     // o sexo do outro tem que ser o que eu procuro
+            ->where('seeking', $me->sex);    // e o outro tem que procurar o meu sexo
+    }
 }
