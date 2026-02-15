@@ -34,8 +34,16 @@
                     </x-slot>
 
                     <x-slot name="content">
+                        <x-dropdown-link :href="route('myprofile.edit')">
+                            Meu Perfil 💘
+                        </x-dropdown-link>
+
+                        <x-dropdown-link :href="route('myphotos.index')">
+                            Minhas Fotos 📸
+                        </x-dropdown-link>
+
                         <x-dropdown-link :href="route('profile.edit')">
-                            {{ __('Profile') }}
+                            {{ __('Configurações ⚙️') }}
                         </x-dropdown-link>
 
                         <!-- Authentication -->
