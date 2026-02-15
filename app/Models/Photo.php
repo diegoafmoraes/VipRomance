@@ -8,7 +8,24 @@ use Illuminate\Database\Eloquent\Model;
 class Photo extends Model
 {
     use HasFactory;
+    
+    protected $fillable = [
+        'user_id',
+        'path',
+        'is_primary',
+        'is_private',
+    ];
 
+    protected $casts = [
+        'is_primary' => 'boolean',
+        'is_private' => 'boolean',
+    ];
+
+    public function getUrlAttribute(): string
+    {
+        return asset('storage/' . ltrim($this->path, '/'));
+    }    
+    
     /**
      * Metodo de relacionamento com fotos do usuario
      *

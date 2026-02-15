@@ -7,6 +7,7 @@ use App\Http\Controllers\MyProfileController;
 use App\Http\Controllers\PublicProfileController;
 use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\MyPhotosController;
+use App\Http\Controllers\PhotoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -59,4 +60,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/minhas-fotos', [MyPhotosController::class, 'store'])->name('myphotos.store');
     Route::delete('/minhas-fotos/{photo}', [MyPhotosController::class, 'destroy'])->name('myphotos.destroy');
     Route::post('/minhas-fotos/{photo}/primary', [MyPhotosController::class, 'makePrimary'])->name('myphotos.primary');
+
+    // 
+    Route::get('/meu-perfil/fotos', [PhotoController::class, 'index'])->name('myprofile.photos');
+    Route::post('/meu-perfil/fotos', [PhotoController::class, 'store'])->name('myprofile.photos.store');
+    Route::put('/meu-perfil/fotos/{photo}/primary', [PhotoController::class, 'setPrimary'])->name('myprofile.photos.primary');
+    Route::delete('/meu-perfil/fotos/{photo}', [PhotoController::class, 'destroy'])->name('myprofile.photos.destroy');
 });
