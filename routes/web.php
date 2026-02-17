@@ -6,7 +6,6 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\MyProfileController;
 use App\Http\Controllers\PublicProfileController;
 use App\Http\Controllers\ConversationController;
-use App\Http\Controllers\MyPhotosController;
 use App\Http\Controllers\PhotoController;
 
 /*
@@ -35,9 +34,9 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/meu-perfil/config', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/meu-perfil/config', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/meu-perfil/config', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
 require __DIR__ . '/auth.php';
@@ -55,13 +54,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/meu-perfil', [MyProfileController::class, 'edit'])->name('myprofile.edit');
     Route::put('/meu-perfil', [MyProfileController::class, 'update'])->name('myprofile.update');
 
-    // Rotas de tratamento do upload e manuseio de fotos
-    Route::get('/minhas-fotos', [MyPhotosController::class, 'index'])->name('myphotos.index');
-    Route::post('/minhas-fotos', [MyPhotosController::class, 'store'])->name('myphotos.store');
-    Route::delete('/minhas-fotos/{photo}', [MyPhotosController::class, 'destroy'])->name('myphotos.destroy');
-    Route::post('/minhas-fotos/{photo}/primary', [MyPhotosController::class, 'makePrimary'])->name('myphotos.primary');
-
-    // 
+    // Rotas de localizacao das fotos (OFICIAL)
     Route::get('/meu-perfil/fotos', [PhotoController::class, 'index'])->name('myprofile.photos');
     Route::post('/meu-perfil/fotos', [PhotoController::class, 'store'])->name('myprofile.photos.store');
     Route::put('/meu-perfil/fotos/{photo}/primary', [PhotoController::class, 'setPrimary'])->name('myprofile.photos.primary');

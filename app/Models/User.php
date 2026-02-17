@@ -69,7 +69,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Tratar upload de Fotos
+     * Relacionamento de dados: Tratar upload de Fotos Album
      *
      * @return void
      */
@@ -78,4 +78,14 @@ class User extends Authenticatable
         return $this->hasMany(Photo::class);
     }
 
+    /**
+     * Relacionamento de dados: Tratar upload de Fotos Perfil
+     *
+     * @return void
+     */
+    public function mainPhoto()
+    {
+        return $this->hasOne(Photo::class)
+            ->where('is_primary', 1);
+    }
 }

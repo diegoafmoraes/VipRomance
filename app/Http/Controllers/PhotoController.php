@@ -37,7 +37,7 @@ class PhotoController extends Controller
         ]);
 
         $username = $me->username ?: ('user-' . $me->id);
-        $dir = "users/{$username}";
+        $dir = "users/{$username}/photos";
 
         // salva no disk public (storage/app/public/...)
         $path = $request->file('photo')->store($dir, 'public'); // ex: users/diego/abc.jpg
@@ -92,9 +92,12 @@ class PhotoController extends Controller
 
             // se apagou a principal, escolhe outra como principal (se existir)
             if ($wasPrimary) {
-                $next = $me->photos()->orderBy('id')->first();
-                if ($next) {
-                    $next->update(['is_primary' => 1]);
+                if ($wasPrimary) {
+                    $next = $me->photos()->orderBy('id')->first();
+                    if ($next) {
+                        $me->photos()->update(['is_primary' => 0]);
+                        $next->update(['is_primary' => 1]);
+                    }
                 }
             }
         });

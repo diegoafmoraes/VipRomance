@@ -43,7 +43,7 @@
                     <div class="flex items-center justify-between mb-4">
                         <h3 class="font-extrabold text-gray-900">Fotos 📸</h3>
                         <span class="text-xs text-gray-500">
-                            {{ $u->photos?->count() ?? 0 }}/5
+                            {{ $u->photos?->count() ?? 0 }}/7
                         </span>
                     </div>
 

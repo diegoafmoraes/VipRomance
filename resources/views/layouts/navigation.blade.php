@@ -38,7 +38,7 @@
                             Meu Perfil 💘
                         </x-dropdown-link>
 
-                        <x-dropdown-link :href="route('myphotos.index')">
+                        <x-dropdown-link :href="route('myprofile.photos')">
                             Minhas Fotos 📸
                         </x-dropdown-link>
 
