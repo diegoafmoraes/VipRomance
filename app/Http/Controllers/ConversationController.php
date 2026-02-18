@@ -42,7 +42,7 @@ class ConversationController extends Controller
         return redirect()->route('chat.show', $c);
     }
 
-    public function show(\App\Models\Conversation $conversation)
+    public function show(Conversation $conversation)
     {
         $me = auth()->user();
 
@@ -50,6 +50,11 @@ class ConversationController extends Controller
             $conversation->user_one_id === $me->id || $conversation->user_two_id === $me->id,
             403
         );
+
+        $messages = $conversation->messages()
+            ->with(['sender.primaryPhoto'])
+            ->orderBy('id')
+            ->get();
 
         // pega o "outro lado" da conversa
         $otherId = ($conversation->user_one_id === $me->id)
@@ -65,28 +70,32 @@ class ConversationController extends Controller
         return view('chat.show', compact('conversation', 'messages', 'me', 'other'));
     }
 
-
     public function send(Request $request, Conversation $conversation)
     {
         $me = auth()->user();
 
+        // segurança: só participa quem é da conversa
         abort_unless(
-            $conversation->user_one_id === $me->id || $conversation->user_two_id === $me->id,
+            in_array($me->id, [$conversation->user_one_id, $conversation->user_two_id]),
             403
         );
 
+        // ✅ VALIDAÇÃO AQUI
         $data = $request->validate([
-            'body' => ['required', 'string', 'max:2000'],
+            'body' => ['required', 'string', 'max:500'],
         ]);
 
+        // cria mensagem
         $conversation->messages()->create([
             'sender_id' => $me->id,
             'body'      => $data['body'],
         ]);
 
-        $conversation->update(['last_message_at' => now()]);
+        // atualiza última msg
+        $conversation->update([
+            'last_message_at' => now(),
+        ]);
 
-        return redirect()
-            ->route('conversations.show', $conversation);
+        return redirect()->route('chat.show', $conversation);
     }
 }

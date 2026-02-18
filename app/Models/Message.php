@@ -15,10 +15,16 @@ class Message extends Model
         'read_at',
     ];
 
+    protected $casts = [
+        'sender_id' => 'integer',
+        'conversation_id' => 'integer',
+        'read_at' => 'datetime',
+    ];
+
     public function conversation()
-{
-    return $this->belongsTo(Conversation::class, 'conversation_id');
-}
+    {
+        return $this->belongsTo(Conversation::class, 'conversation_id');
+    }
 
 
     public function messages()
