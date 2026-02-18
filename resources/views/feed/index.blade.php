@@ -29,10 +29,18 @@
                 <a href="{{ route('profile.public', $u->username) }}"
                     class="min-w-[220px] rounded-2xl bg-white border border-rose-100
        hover:scale-[1.02] hover:shadow-xl transition-all duration-300 hover:border-rose-200 hover:shadow transition p-4">
+
                     <div class="flex items-center gap-3">
+                        @if($u->primaryPhoto)
+                        <img src="{{ $u->primaryPhoto->url }}"
+                            class="h-12 w-12 rounded-full object-cover border border-rose-200"
+                            alt="Foto de {{ $u->username }}">
+                        @else
                         <div class="h-12 w-12 rounded-full bg-gradient-to-br from-rose-400 to-pink-500 flex items-center justify-center text-white font-bold">
                             {{ strtoupper(substr($u->username,0,1)) }}
                         </div>
+                        @endif
+
                         <div>
                             <div class="font-semibold text-gray-900">{{ $u->username }}</div>
                             <div class="text-xs text-gray-500">{{ $u->city }} - {{ $u->state }}</div>
@@ -65,34 +73,98 @@
                 @forelse($latest as $u)
                 <a href="{{ route('profile.public', $u->username) }}"
                     class="rounded-2xl bg-white border border-rose-100
-       hover:-translate-y-1 hover:shadow-xl transition-all duration-300 hover:border-rose-200 hover:shadow transition p-5">
-                    <div class="flex items-center justify-between">
-                        <div class="font-bold text-gray-900">{{ $u->username }}</div>
-                        <span class="text-xs text-gray-500">{{ $u->sex }} → {{ $u->seeking }}</span>
+                  hover:-translate-y-1 hover:shadow-xl transition-all duration-300
+                  hover:border-rose-200 p-5">
+
+                    {{-- Cabeçalho com foto --}}
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center gap-3">
+
+                            {{-- Avatar --}}
+                            @if($u->primaryPhoto)
+                            <img src="{{ $u->primaryPhoto->url }}"
+                                class="h-10 w-10 rounded-full object-cover border border-rose-200"
+                                alt="Foto de {{ $u->username }}">
+                            @else
+                            <div class="h-10 w-10 rounded-full
+                                    bg-gradient-to-br from-rose-400 to-pink-500
+                                    flex items-center justify-center
+                                    text-white font-bold">
+                                {{ strtoupper(substr($u->username,0,1)) }}
+                            </div>
+                            @endif
+
+                            {{-- Nome + Local --}}
+                            <div>
+                                <div class="font-bold text-gray-900 leading-tight">
+                                    {{ $u->username }}
+                                </div>
+
+                                <div class="text-xs text-gray-500">
+                                    {{ $u->city ?? '—' }}{{ $u->state ? ' - '.$u->state : '' }}
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Sexo --}}
+                        <span class="text-xs text-gray-500">
+                            {{ $u->sex }} → {{ $u->seeking }}
+                        </span>
                     </div>
 
+                    {{-- Bio --}}
                     <div class="mt-2 text-sm text-gray-600 line-clamp-2">
-                        {{ $u->bio }}
+                        {{ $u->bio ?: 'Sem bio por enquanto… 👀' }}
                     </div>
 
+                    {{-- Tags --}}
                     <div class="mt-4 flex flex-wrap gap-2 text-xs">
-                        <span class="rounded-full bg-rose-50 text-rose-700 px-2 py-1">{{ $u->hair_color }}</span>
-                        <span class="rounded-full bg-rose-50 text-rose-700 px-2 py-1">{{ $u->eye_color }}</span>
-                        <span class="rounded-full bg-gray-100 px-2 py-1">{{ $u->height_cm }}cm</span>
-                        <span class="rounded-full bg-gray-100 px-2 py-1">{{ $u->weight_kg }}kg</span>
-                        <span class="rounded-full bg-gray-100 px-2 py-1">{{ $u->body_type }}</span>
+                        @if($u->hair_color)
+                        <span class="rounded-full bg-rose-50 text-rose-700 px-2 py-1">
+                            {{ $u->hair_color }}
+                        </span>
+                        @endif
+
+                        @if($u->eye_color)
+                        <span class="rounded-full bg-rose-50 text-rose-700 px-2 py-1">
+                            {{ $u->eye_color }}
+                        </span>
+                        @endif
+
+                        @if($u->height_cm)
+                        <span class="rounded-full bg-gray-100 px-2 py-1">
+                            {{ $u->height_cm }}cm
+                        </span>
+                        @endif
+
+                        @if($u->weight_kg)
+                        <span class="rounded-full bg-gray-100 px-2 py-1">
+                            {{ $u->weight_kg }}kg
+                        </span>
+                        @endif
+
+                        @if($u->body_type)
+                        <span class="rounded-full bg-gray-100 px-2 py-1">
+                            {{ $u->body_type }}
+                        </span>
+                        @endif
                     </div>
 
+                    {{-- Botão --}}
                     <div class="mt-4 inline-flex items-center gap-2 text-sm font-bold text-white
-            bg-gradient-to-r from-rose-500 to-pink-500
-            px-3 py-1.5 rounded-full shadow">
+                        bg-gradient-to-r from-rose-500 to-pink-500
+                        px-3 py-1.5 rounded-full shadow">
                         Ver perfil →
                     </div>
+
                 </a>
                 @empty
-                <div class="text-gray-500">Ainda não tem ninguém compatível. Bora convidar mais gente 😄</div>
+                <div class="text-gray-500">
+                    Ainda não tem ninguém compatível. Bora convidar mais gente 😄
+                </div>
                 @endforelse
             </div>
         </div>
+
     </div>
 </x-app-layout>

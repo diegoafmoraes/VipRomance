@@ -37,6 +37,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/meu-perfil/config', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/meu-perfil/config', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/meu-perfil/config', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::get('/conversas/{conversation}', [ConversationController::class, 'show'])
+        ->name('chat.show');
+    Route::post('/conversas/{conversation}/mensagens', [ConversationController::class, 'send'])
+        ->name('chat.send');
 });
 
 require __DIR__ . '/auth.php';

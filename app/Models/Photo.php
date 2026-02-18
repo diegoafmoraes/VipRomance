@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Photo extends Model
 {
@@ -21,9 +22,11 @@ class Photo extends Model
         'is_private' => 'boolean',
     ];
 
+    protected $appends = ['url'];
+
     public function getUrlAttribute(): string
     {
-        return asset('storage/' . ltrim($this->path, '/'));
+        return Storage::disk('public')->url($this->path);
     }    
     
     /**

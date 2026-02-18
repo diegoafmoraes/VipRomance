@@ -21,10 +21,10 @@ class ConversationController extends Controller
 
         // procura conversa existente (ajuste nomes conforme seu schema)
         $c = Conversation::query()
-            ->where(function($q) use ($me, $other) {
+            ->where(function ($q) use ($me, $other) {
                 $q->where('user_one_id', $me->id)->where('user_two_id', $other->id);
             })
-            ->orWhere(function($q) use ($me, $other) {
+            ->orWhere(function ($q) use ($me, $other) {
                 $q->where('user_one_id', $other->id)->where('user_two_id', $me->id);
             })
             ->first();
@@ -38,6 +38,55 @@ class ConversationController extends Controller
         }
 
         // por enquanto, só redireciona pro "mensagens" depois
-        return redirect()->route('home')->with('status', 'Conversa iniciada! (já já a tela de mensagens entra)');
+        // return redirect()->route('home')->with('status', 'Conversa iniciada! (já já a tela de mensagens entra)');
+        return redirect()->route('chat.show', $c);
+    }
+
+    public function show(\App\Models\Conversation $conversation)
+    {
+        $me = auth()->user();
+
+        abort_unless(
+            $conversation->user_one_id === $me->id || $conversation->user_two_id === $me->id,
+            403
+        );
+
+        // pega o "outro lado" da conversa
+        $otherId = ($conversation->user_one_id === $me->id)
+            ? $conversation->user_two_id
+            : $conversation->user_one_id;
+
+        $other = \App\Models\User::findOrFail($otherId);
+
+        $messages = $conversation->messages()
+            ->orderBy('created_at')
+            ->get();
+
+        return view('chat.show', compact('conversation', 'messages', 'me', 'other'));
+    }
+
+
+    public function send(Request $request, Conversation $conversation)
+    {
+        $me = auth()->user();
+
+        abort_unless(
+            $conversation->user_one_id === $me->id || $conversation->user_two_id === $me->id,
+            403
+        );
+
+        $data = $request->validate([
+            'body' => ['required', 'string', 'max:2000'],
+        ]);
+
+        $conversation->messages()->create([
+            'sender_id' => $me->id,
+            'body'      => $data['body'],
+        ]);
+
+        $conversation->update(['last_message_at' => now()]);
+
+        return redirect()
+            ->route('conversations.show', $conversation);
     }
 }

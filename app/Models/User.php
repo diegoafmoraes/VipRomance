@@ -78,6 +78,12 @@ class User extends Authenticatable
         return $this->hasMany(Photo::class);
     }
 
+    public function primaryPhoto()
+    {
+        return $this->hasOne(Photo::class)
+            ->where('is_primary', 1);
+    }
+
     /**
      * Relacionamento de dados: Tratar upload de Fotos Perfil
      *
