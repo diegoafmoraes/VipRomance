@@ -13,24 +13,18 @@ class FeedController extends Controller
 
         // Últimos cadastrados compatíveis (grid principal)
         $latest = User::query()
-            /* ->reciprocalMatches($me)
-            ->latest('id')
-            ->take(12)
-            ->get(); */
             ->where('id', '!=', $me->id)
             ->with('primaryPhoto')
-            ->latest()
+            ->reciprocalMatches($me)
+            ->latest('id')
             ->limit(12)
             ->get();
 
         // Aleatórios compatíveis (carrossel)
         $random = User::query()
-            /* ->reciprocalMatches($me)
-            ->inRandomOrder()
-            ->take(12)
-            ->get(); */
             ->where('id', '!=', $me->id)
             ->with('primaryPhoto')
+            ->reciprocalMatches($me)
             ->inRandomOrder()
             ->limit(12)
             ->get();

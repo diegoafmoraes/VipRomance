@@ -8,6 +8,35 @@ use Illuminate\Http\Request;
 
 class ConversationController extends Controller
 {
+
+    public function index()
+    {
+        $me = auth()->user();
+
+        $conversations = Conversation::query()
+            ->where('user_one_id', $me->id)
+            ->orWhere('user_two_id', $me->id)
+            ->with([
+                'userOne.primaryPhoto',
+                'userTwo.primaryPhoto',
+                // se tiver relação messages():
+                'messages' => fn($q) => $q->latest()->limit(1),
+            ])
+            ->orderByDesc('last_message_at')
+            ->get()
+            ->map(function ($c) use ($me) {
+                // quem é o outro usuário nessa conversa?
+                $c->other = ($c->user_one_id === $me->id) ? $c->userTwo : $c->userOne;
+
+                // última msg (se tiver relação messages)
+                $c->lastMessage = $c->messages->first() ?? null;
+
+                return $c;
+            });
+
+        return view('chat.index', compact('me', 'conversations'));
+    }
+
     public function start(string $username)
     {
         $me = auth()->user();
@@ -39,6 +68,33 @@ class ConversationController extends Controller
 
         // por enquanto, só redireciona pro "mensagens" depois
         // return redirect()->route('home')->with('status', 'Conversa iniciada! (já já a tela de mensagens entra)');
+        return redirect()->route('chat.show', $c);
+    }
+
+    public function withUser(string $username)
+    {
+        $me = auth()->user();
+        $other = User::where('username', $username)->firstOrFail();
+
+        abort_if($me->id === $other->id, 403);
+
+        $c = Conversation::query()
+            ->where(function ($q) use ($me, $other) {
+                $q->where('user_one_id', $me->id)->where('user_two_id', $other->id);
+            })
+            ->orWhere(function ($q) use ($me, $other) {
+                $q->where('user_one_id', $other->id)->where('user_two_id', $me->id);
+            })
+            ->first();
+
+        if (!$c) {
+            $c = Conversation::create([
+                'user_one_id' => $me->id,
+                'user_two_id' => $other->id,
+                'last_message_at' => now(),
+            ]);
+        }
+
         return redirect()->route('chat.show', $c);
     }
 

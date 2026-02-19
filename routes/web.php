@@ -64,4 +64,22 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/meu-perfil/fotos', [PhotoController::class, 'store'])->name('myprofile.photos.store');
     Route::put('/meu-perfil/fotos/{photo}/primary', [PhotoController::class, 'setPrimary'])->name('myprofile.photos.primary');
     Route::delete('/meu-perfil/fotos/{photo}', [PhotoController::class, 'destroy'])->name('myprofile.photos.destroy');
+
+    // Rotas das páginas de conversa de dentro do perfil
+    Route::get('/conversas', [ConversationController::class, 'index'])
+        ->name('chat.index');
+    Route::get('/conversas/{conversation}', [ConversationController::class, 'show'])
+        ->name('chat.show');
+    Route::post('/conversas/{conversation}/mensagens', [ConversationController::class, 'send'])
+        ->name('chat.send');
+
+    // Rotas da págins geral de conversas
+    Route::get('/conversas/com/{username}', [ConversationController::class, 'withUser'])
+        ->name('chat.with');
+    Route::get('/conversas/{conversation}', [ConversationController::class, 'show'])
+        ->name('chat.show');
+    Route::post('/conversas/{conversation}/mensagens', [ConversationController::class, 'send'])
+        ->name('chat.send');
+    Route::get('/minhas-conversas', [ConversationController::class, 'index'])
+    ->name('chat.index');
 });

@@ -30,6 +30,7 @@ class MyProfileController extends Controller
             'weight_kg'  => ['nullable', 'integer', 'min:40', 'max:200'],
 
             'body_type'  => ['nullable', 'in:NORMAL,MAGRO,SARADO,MUSCULOSO,FOFINHO,ELEGANTE,SENSUAL'],
+            'preferences' => ['nullable','array'],
         ]);
 
         $user->fill($data)->save();

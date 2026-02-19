@@ -50,6 +50,7 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'preferences' => 'array',
     ];
 
     /**
@@ -59,13 +60,10 @@ class User extends Authenticatable
      * @param self $me
      * @return Builder
      */
-    public function scopeReciprocalMatches(Builder $query, self $me): Builder
+    public function scopeReciprocalMatches(Builder $q, User $me): Builder
     {
-        return $query
-            ->where('id', '!=', $me->id)
-            ->where('is_active', 1)
-            ->where('sex', $me->seeking)     // o sexo do outro tem que ser o que eu procuro
-            ->where('seeking', $me->sex);    // e o outro tem que procurar o meu sexo
+        return $q->where('sex', $me->seeking)
+            ->where('seeking', $me->sex);
     }
 
     /**

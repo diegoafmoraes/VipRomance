@@ -3,6 +3,18 @@
         <div class="flex items-center justify-between">
             <h2 class="font-bold text-2xl text-rose-600 leading-tight flex items-center gap-2">
                 Sugestões pra você 💘
+                <a href="{{ route('myprofile.edit') }}"
+                    class="inline-flex items-center gap-2 rounded-full bg-white/70 px-3 py-1 text-xs font-semibold
+          border border-rose-100 hover:border-rose-200">
+                    💘 Meu Perfil 
+                </a>
+                <a href="{{ route('chat.index') }}"
+                    class="inline-flex items-center gap-2 rounded-full bg-white/70 px-3 py-1 text-xs font-semibold
+          border border-rose-100 hover:border-rose-200">
+                    💬 Minhas conversas
+                </a>
+
+
             </h2>
 
             <div class="text-sm text-gray-500">
