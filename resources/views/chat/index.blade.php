@@ -18,7 +18,7 @@
             @forelse($conversations as $c)
             @php $u = $c->other; @endphp
 
-            <a href="{{ route('chat.show', $c) }}"
+            <a href="{{ route('chat.withUser', $u->username) }}"
                 class="flex items-center gap-3 p-4 border-b border-rose-50 hover:bg-rose-50/40 transition">
 
                 {{-- avatar --}}

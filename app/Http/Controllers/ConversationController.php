@@ -78,7 +78,11 @@ class ConversationController extends Controller
 
         abort_if($me->id === $other->id, 403);
 
-        $c = Conversation::query()
+        // compatibilidade recíproca (se você quiser manter isso aqui também)
+        $ok = ($me->seeking === $other->sex) && ($other->seeking === $me->sex);
+        abort_unless($ok, 404);
+
+        $conversation = Conversation::query()
             ->where(function ($q) use ($me, $other) {
                 $q->where('user_one_id', $me->id)->where('user_two_id', $other->id);
             })
@@ -87,18 +91,68 @@ class ConversationController extends Controller
             })
             ->first();
 
-        if (!$c) {
-            $c = Conversation::create([
+        if (!$conversation) {
+            $conversation = Conversation::create([
                 'user_one_id' => $me->id,
                 'user_two_id' => $other->id,
                 'last_message_at' => now(),
             ]);
         }
 
-        return redirect()->route('chat.show', $c);
+        $messages = \App\Models\Message::query()
+            ->where('conversation_id', $conversation->id)
+            ->orderBy('id')
+            ->get();
+
+        return view('chat.show', compact('me', 'other', 'conversation', 'messages'));
     }
 
-    public function show(Conversation $conversation)
+    public function sendToUser(Request $request, string $username)
+    {
+        $me = auth()->user();
+        $other = User::where('username', $username)->firstOrFail();
+
+        $request->validate([
+            'body' => ['required', 'string', 'max:500'],
+        ]);
+
+        // acha a conversa (mesma lógica)
+        $conversation = Conversation::query()
+            ->where(function ($q) use ($me, $other) {
+                $q->where('user_one_id', $me->id)->where('user_two_id', $other->id);
+            })
+            ->orWhere(function ($q) use ($me, $other) {
+                $q->where('user_one_id', $other->id)->where('user_two_id', $me->id);
+            })
+            ->first();
+
+        if (!$conversation) {
+            $conversation = Conversation::create([
+                'user_one_id' => $me->id,
+                'user_two_id' => $other->id,
+                'last_message_at' => now(),
+            ]);
+        }
+
+        // segurança: só participa quem é da conversa
+        abort_unless(
+            in_array($me->id, [$conversation->user_one_id, $conversation->user_two_id]),
+            403
+        );
+
+        \App\Models\Message::create([
+            'conversation_id' => $conversation->id,
+            'sender_id' => $me->id,
+            'body' => $request->string('body')->toString(),
+        ]);
+
+        $conversation->update(['last_message_at' => now()]);
+
+        // ✅ volta pro chat POR USERNAME (não por chat.show)
+        return redirect()->route('chat.withUser', $other->username);
+    }
+
+    /* public function show(Conversation $conversation)
     {
         $me = auth()->user();
 
@@ -123,35 +177,6 @@ class ConversationController extends Controller
             ->orderBy('created_at')
             ->get();
 
-        return view('chat.show', compact('conversation', 'messages', 'me', 'other'));
-    }
-
-    public function send(Request $request, Conversation $conversation)
-    {
-        $me = auth()->user();
-
-        // segurança: só participa quem é da conversa
-        abort_unless(
-            in_array($me->id, [$conversation->user_one_id, $conversation->user_two_id]),
-            403
-        );
-
-        // ✅ VALIDAÇÃO AQUI
-        $data = $request->validate([
-            'body' => ['required', 'string', 'max:500'],
-        ]);
-
-        // cria mensagem
-        $conversation->messages()->create([
-            'sender_id' => $me->id,
-            'body'      => $data['body'],
-        ]);
-
-        // atualiza última msg
-        $conversation->update([
-            'last_message_at' => now(),
-        ]);
-
-        return redirect()->route('chat.show', $conversation);
-    }
+        return view('chat.with', compact('conversation', 'messages', 'me', 'other'));
+    } */
 }

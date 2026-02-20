@@ -3,7 +3,7 @@
         <div class="flex items-center justify-between gap-4">
             <div class="flex items-center gap-3">
                 <a href="{{ route('home') }}"
-                   class="inline-flex items-center gap-2 rounded-full bg-white/70 px-3 py-2 text-sm font-semibold text-gray-700 shadow-sm ring-1 ring-gray-200 hover:bg-white">
+                    class="inline-flex items-center gap-2 rounded-full bg-white/70 px-3 py-2 text-sm font-semibold text-gray-700 shadow-sm ring-1 ring-gray-200 hover:bg-white">
                     ← Voltar
                 </a>
 
@@ -21,9 +21,9 @@
 
             <div class="flex items-center gap-2">
                 @if($u->is_tester)
-                    <span class="inline-flex items-center rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold text-emerald-700">
-                        Tester ⭐
-                    </span>
+                <span class="inline-flex items-center rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold text-emerald-700">
+                    Tester ⭐
+                </span>
                 @endif
 
                 <span class="inline-flex items-center rounded-full bg-rose-100 px-3 py-1 text-xs font-bold text-rose-700">
@@ -48,44 +48,44 @@
                     </div>
 
                     @php
-                        $photos = $u->photos ?? collect();
-                        $main = $photos->first();
+                    $photos = $u->photos ?? collect();
+                    $main = $photos->first();
                     @endphp
 
                     {{-- Foto principal --}}
                     <div class="rounded-2xl overflow-hidden ring-1 ring-rose-100 bg-gradient-to-br from-rose-100 to-pink-100">
                         @if($main)
-                            <img src="{{ asset('storage/'.$main->path) }}"
-                                 alt="Foto de {{ $u->username }}"
-                                 class="w-full h-[280px] sm:h-[360px] object-cover">
+                        <img src="{{ asset('storage/'.$main->path) }}"
+                            alt="Foto de {{ $u->username }}"
+                            class="w-full h-[280px] sm:h-[360px] object-cover">
                         @else
-                            <div class="w-full h-[280px] sm:h-[360px] flex items-center justify-center">
-                                <div class="text-center">
-                                    <div class="mx-auto h-16 w-16 rounded-full bg-gradient-to-br from-rose-400 to-pink-500 flex items-center justify-center text-white font-extrabold text-2xl">
-                                        {{ strtoupper(substr($u->username, 0, 1)) }}
-                                    </div>
-                                    <div class="mt-3 text-sm text-gray-700 font-semibold">
-                                        Ainda sem fotos 😅
-                                    </div>
-                                    <div class="text-xs text-gray-500">
-                                        (mas já já a gente liga o upload premium)
-                                    </div>
+                        <div class="w-full h-[280px] sm:h-[360px] flex items-center justify-center">
+                            <div class="text-center">
+                                <div class="mx-auto h-16 w-16 rounded-full bg-gradient-to-br from-rose-400 to-pink-500 flex items-center justify-center text-white font-extrabold text-2xl">
+                                    {{ strtoupper(substr($u->username, 0, 1)) }}
+                                </div>
+                                <div class="mt-3 text-sm text-gray-700 font-semibold">
+                                    Ainda sem fotos 😅
+                                </div>
+                                <div class="text-xs text-gray-500">
+                                    (mas já já a gente liga o upload premium)
                                 </div>
                             </div>
+                        </div>
                         @endif
                     </div>
 
                     {{-- Thumbs --}}
                     @if($photos->count() > 1)
-                        <div class="mt-4 grid grid-cols-5 gap-2">
-                            @foreach($photos->take(5) as $p)
-                                <div class="aspect-square rounded-xl overflow-hidden ring-1 ring-rose-100 bg-rose-50">
-                                    <img src="{{ asset('storage/'.$p->path) }}"
-                                         alt="Foto"
-                                         class="w-full h-full object-cover">
-                                </div>
-                            @endforeach
+                    <div class="mt-4 grid grid-cols-5 gap-2">
+                        @foreach($photos->take(5) as $p)
+                        <div class="aspect-square rounded-xl overflow-hidden ring-1 ring-rose-100 bg-rose-50">
+                            <img src="{{ asset('storage/'.$p->path) }}"
+                                alt="Foto"
+                                class="w-full h-full object-cover">
                         </div>
+                        @endforeach
+                    </div>
                     @endif
                 </div>
 
@@ -99,44 +99,40 @@
 
                     <div class="mt-4 flex flex-wrap gap-2 text-xs">
                         @if($u->hair_color)
-                            <span class="rounded-full bg-rose-50 text-rose-700 px-2 py-1 font-semibold">{{ $u->hair_color }}</span>
+                        <span class="rounded-full bg-rose-50 text-rose-700 px-2 py-1 font-semibold">{{ $u->hair_color }}</span>
                         @endif
                         @if($u->eye_color)
-                            <span class="rounded-full bg-rose-50 text-rose-700 px-2 py-1 font-semibold">{{ $u->eye_color }}</span>
+                        <span class="rounded-full bg-rose-50 text-rose-700 px-2 py-1 font-semibold">{{ $u->eye_color }}</span>
                         @endif
                         @if($u->height_cm)
-                            <span class="rounded-full bg-gray-100 px-2 py-1 font-semibold">{{ $u->height_cm }}cm</span>
+                        <span class="rounded-full bg-gray-100 px-2 py-1 font-semibold">{{ $u->height_cm }}cm</span>
                         @endif
                         @if($u->weight_kg)
-                            <span class="rounded-full bg-gray-100 px-2 py-1 font-semibold">{{ $u->weight_kg }}kg</span>
+                        <span class="rounded-full bg-gray-100 px-2 py-1 font-semibold">{{ $u->weight_kg }}kg</span>
                         @endif
                         @if($u->body_type)
-                            <span class="rounded-full bg-gray-100 px-2 py-1 font-semibold">{{ $u->body_type }}</span>
+                        <span class="rounded-full bg-gray-100 px-2 py-1 font-semibold">{{ $u->body_type }}</span>
                         @endif
                     </div>
 
                     {{-- CTA --}}
                     <div class="mt-6">
                         @if($me->id === $u->id)
-                            <a href="{{ route('profile.edit') }}"
-                               class="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-gray-900 px-4 py-3 text-sm font-extrabold text-white shadow hover:opacity-90">
-                                ✍️ Editar meu perfil
-                            </a>
+                        <a href="{{ route('profile.edit') }}"
+                            class="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-gray-900 px-4 py-3 text-sm font-extrabold text-white shadow hover:opacity-90">
+                            ✍️ Editar meu perfil
+                        </a>
                         @else
-                            <form method="POST" action="{{ route('chat.start', $u->username) }}">
-                                @csrf
-                                <button type="submit"
-                                    class="w-full inline-flex items-center justify-center gap-2 rounded-xl
-                                           bg-gradient-to-r from-rose-500 to-pink-500 px-4 py-3
-                                           text-sm font-extrabold text-white shadow hover:opacity-90">
-                                    💬 Mandar mensagem
-                                </button>
-                            </form>
+                        <a href="{{ route('chat.withUser', $u->username) }}"
+                            class="mt-4 inline-flex items-center gap-2 text-sm font-bold text-white
+                        bg-gradient-to-r from-rose-500 to-pink-500
+                        px-3 py-1.5 rounded-full shadow">
+                            💬 Mandar mensagem</a>
 
                             <div class="mt-3 text-xs text-gray-500">
                                 Dica: conversa curta, simpática e sem textão… (por enquanto 😄)
                             </div>
-                        @endif
+                            @endif
                     </div>
                 </div>
             </div>

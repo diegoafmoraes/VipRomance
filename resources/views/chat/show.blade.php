@@ -66,7 +66,7 @@
             {{-- composer --}}
             <form id="chatForm"
                 method="POST"
-                action="{{ route('chat.send', $conversation) }}"
+                action="{{ route('chat.sendToUser', $other->username) }}"
                 class="p-3 border-t border-rose-100">
                 @csrf
 
