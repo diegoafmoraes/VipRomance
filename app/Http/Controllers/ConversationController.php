@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Conversation;
+use App\Models\Message;
 use Illuminate\Http\Request;
 
 class ConversationController extends Controller
@@ -78,30 +79,15 @@ class ConversationController extends Controller
 
         abort_if($me->id === $other->id, 403);
 
-        // compatibilidade recíproca (se você quiser manter isso aqui também)
-        $ok = ($me->seeking === $other->sex) && ($other->seeking === $me->sex);
-        abort_unless($ok, 404);
+        // ✅ regra do app: só conversa com match recíproco
+        $this->ensureReciprocalMatchOrFail($me, $other);
 
-        $conversation = Conversation::query()
-            ->where(function ($q) use ($me, $other) {
-                $q->where('user_one_id', $me->id)->where('user_two_id', $other->id);
-            })
-            ->orWhere(function ($q) use ($me, $other) {
-                $q->where('user_one_id', $other->id)->where('user_two_id', $me->id);
-            })
-            ->first();
+        $conversation = $this->findOrCreateConversation($me, $other);
 
-        if (!$conversation) {
-            $conversation = Conversation::create([
-                'user_one_id' => $me->id,
-                'user_two_id' => $other->id,
-                'last_message_at' => now(),
-            ]);
-        }
-
-        $messages = \App\Models\Message::query()
+        // ✅ mensagens do chat
+        $messages = Message::query()
             ->where('conversation_id', $conversation->id)
-            ->orderBy('id')
+            ->orderBy('id') // cronológico
             ->get();
 
         return view('chat.show', compact('me', 'other', 'conversation', 'messages'));
@@ -112,11 +98,45 @@ class ConversationController extends Controller
         $me = auth()->user();
         $other = User::where('username', $username)->firstOrFail();
 
+        abort_if($me->id === $other->id, 403);
+
+        // ✅ mantém a mesma regra também no POST (evita “atalho”)
+        $this->ensureReciprocalMatchOrFail($me, $other);
+
         $request->validate([
             'body' => ['required', 'string', 'max:500'],
         ]);
 
-        // acha a conversa (mesma lógica)
+        $conversation = $this->findOrCreateConversation($me, $other);
+
+        // segurança: só participa quem é da conversa
+        abort_unless(
+            in_array($me->id, [$conversation->user_one_id, $conversation->user_two_id]),
+            403
+        );
+
+        $body = trim($request->string('body')->toString());
+        abort_if($body === '', 422); // evita mensagem só com espaço
+
+        $msg = Message::create([
+            'conversation_id' => $conversation->id,
+            'sender_id'       => $me->id,
+            'body'            => $body,
+        ]);
+
+        // ✅ last_message_at = hora real da msg
+        $conversation->update(['last_message_at' => $msg->created_at]);
+
+        // ✅ volta pro chat por username
+        return redirect()->route('chat.withUser', $other->username);
+    }
+
+    // ------------------------------------------------------------
+    // Helpers privados
+    // ------------------------------------------------------------
+
+    private function findOrCreateConversation($me, $other): Conversation
+    {
         $conversation = Conversation::query()
             ->where(function ($q) use ($me, $other) {
                 $q->where('user_one_id', $me->id)->where('user_two_id', $other->id);
@@ -134,22 +154,13 @@ class ConversationController extends Controller
             ]);
         }
 
-        // segurança: só participa quem é da conversa
-        abort_unless(
-            in_array($me->id, [$conversation->user_one_id, $conversation->user_two_id]),
-            403
-        );
+        return $conversation;
+    }
 
-        \App\Models\Message::create([
-            'conversation_id' => $conversation->id,
-            'sender_id' => $me->id,
-            'body' => $request->string('body')->toString(),
-        ]);
-
-        $conversation->update(['last_message_at' => now()]);
-
-        // ✅ volta pro chat POR USERNAME (não por chat.show)
-        return redirect()->route('chat.withUser', $other->username);
+    private function ensureReciprocalMatchOrFail($me, $other): void
+    {
+        $ok = ($me->seeking === $other->sex) && ($other->seeking === $me->sex);
+        abort_unless($ok, 404);
     }
 
     /* public function show(Conversation $conversation)

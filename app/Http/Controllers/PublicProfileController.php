@@ -15,6 +15,8 @@ class PublicProfileController extends Controller
             ->where('username', $username)
             ->with(['photos' => fn($q) => $q->orderByDesc('is_primary')->orderBy('id')])
             ->firstOrFail();
+        
+        // dd($u->photos);
 
         // Se for o próprio perfil, libera sempre
         if ($me->id !== $u->id) {

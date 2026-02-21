@@ -68,10 +68,18 @@ Route::middleware('auth')->group(function () {
     //     ->name('chat.send');
     // Route::get('/conversas/com/{username}', [ConversationController::class, 'withUser'])
     //     ->name('chat.with');
-    Route::get('/conversas/com/{username}', [ConversationController::class, 'withUser'])
-        ->name('chat.withUser');
-    Route::post('/conversas/com/{username}/mensagens', [ConversationController::class, 'sendToUser'])
-        ->name('chat.sendToUser');
+    // Route::get('/conversas/com/{username}', [ConversationController::class, 'withUser'])
+    // ->name('chat.withUser');
+    // Route::post('/conversas/com/{username}/mensagens', [ConversationController::class, 'sendToUser'])
+    //     ->name('chat.sendToUser');
+    // lista das conversas (inbox)
+    Route::get('/conversas', [ConversationController::class, 'index'])->name('chat.index');
+
+    // chat com usuário específico
+    Route::get('/conversas/com/{username}', [ConversationController::class, 'withUser'])->name('chat.withUser');
+
+    // enviar msg no chat com esse usuário
+    Route::post('/conversas/com/{username}/mensagens', [ConversationController::class, 'sendToUser'])->name('chat.sendToUser');
 });
 
 require __DIR__ . '/auth.php';

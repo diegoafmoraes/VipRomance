@@ -7,67 +7,70 @@
             </div>
 
             <a href="{{ route('home') }}"
-                class="rounded-full bg-white/70 px-3 py-1 text-xs font-semibold border border-rose-100 hover:border-rose-200">
+               class="rounded-full bg-white/70 px-3 py-1 text-xs font-semibold border border-rose-100 hover:border-rose-200">
                 ← Voltar
             </a>
         </div>
     </x-slot>
 
-    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+    {{-- container mais largo (max-w-8x1 não existe; use 7xl) --}}
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="bg-white rounded-2xl shadow border border-rose-100 overflow-hidden">
+
             {{-- lista --}}
             <div id="chatScroll"
-                class="h-[60vh] overflow-y-auto p-4 space-y-3 bg-gradient-to-b from-rose-50/40 to-white">
+                 class="h-[60vh] overflow-y-auto p-4 space-y-3 bg-gradient-to-b from-rose-50/40 to-white">
                 @forelse($messages as $m)
-                @php
-                $isMe = $m->sender_id === $me->id;
-                $sender = $m->sender; // veio do with()
-                $photo = $sender?->primaryPhoto?->url ?? null;
-                $initial = strtoupper(substr($sender?->username ?? '?', 0, 1));
-                @endphp
+                    @php
+                        $isMe = $m->sender_id === $me->id;
+                        $sender = $m->sender; // veio do with()
+                        $photo = $sender?->primaryPhoto?->url ?? null;
+                        $initial = strtoupper(substr($sender?->username ?? '?', 0, 1));
+                    @endphp
 
-                <div class="flex {{ $isMe ? 'justify-end' : 'justify-start' }}">
-                    <div class="flex items-end gap-2 {{ $isMe ? 'flex-row-reverse' : '' }} max-w-[85%]">
+                    <div class="flex {{ $isMe ? 'justify-end' : 'justify-start' }}">
+                        <div class="flex items-end gap-2 {{ $isMe ? 'flex-row-reverse' : '' }} max-w-[85%]">
 
-                        {{-- avatar --}}
-                        <div class="shrink-0">
-                            @if($photo)
-                            <img src="{{ $photo }}" alt="Foto"
-                                class="h-9 w-9 rounded-full object-cover border border-rose-200 shadow-sm">
-                            @else
-                            <div class="h-9 w-9 rounded-full bg-gradient-to-br from-rose-400 to-pink-500
-                    flex items-center justify-center text-white font-bold text-xs shadow-sm">
-                                {{ $initial }}
+                            {{-- avatar --}}
+                            <div class="shrink-0">
+                                @if($photo)
+                                    <img src="{{ $photo }}" alt="Foto"
+                                         class="h-10 w-10 rounded-full object-cover border border-rose-200 shadow-sm">
+                                @else
+                                    <div class="h-10 w-10 rounded-full bg-gradient-to-br from-rose-400 to-pink-500
+                                                flex items-center justify-center text-white font-bold text-xs shadow-sm">
+                                        {{ $initial }}
+                                    </div>
+                                @endif
                             </div>
-                            @endif
-                        </div>
 
-                        {{-- balão --}}
-                        <div class="max-w-[75%] rounded-2xl px-4 py-2 text-sm shadow
-      {{ $isMe
-          ? 'bg-white border border-rose-100 text-rose-500'
-          : 'bg-rose-500 text-white' }}">
-                            <div class="whitespace-pre-wrap">{{ $m->body }}</div>
+                            {{-- balão --}}
+                            <div class="max-w-[90%] rounded-2xl px-4 py-2 text-base shadow
+                                        {{ $isMe
+                                            ? 'bg-white border border-rose-100 text-rose-500'
+                                            : 'bg-rose-500 text-white' }}">
+                                <div class="whitespace-pre-wrap">{{ $m->body }}</div>
 
-                            <div class="mt-1 text-[11px] opacity-80 {{ $isMe ? 'text-rose-500' : 'text-white' }}">
-                                {{ optional($m->created_at)->format('H:i') }}
+                                {{-- hora levemente maior (11px -> 12/13px) --}}
+                                <div class="mt-1 text-[13px] opacity-80 {{ $isMe ? 'text-rose-500' : 'text-white' }}">
+                                    {{ optional($m->created_at)->format('H:i') }}
+                                </div>
                             </div>
-                        </div>
 
+                        </div>
                     </div>
-                </div>
                 @empty
-                <div class="text-center text-gray-500 py-10">
-                    Ainda não tem mensagens… manda a primeira e faz história 😄
-                </div>
+                    <div class="text-center text-gray-500 py-10">
+                        Ainda não tem mensagens… manda a primeira e faz história 😄
+                    </div>
                 @endforelse
             </div>
 
             {{-- composer --}}
             <form id="chatForm"
-                method="POST"
-                action="{{ route('chat.sendToUser', $other->username) }}"
-                class="p-3 border-t border-rose-100">
+                  method="POST"
+                  action="{{ route('chat.sendToUser', $other->username) }}"
+                  class="p-3 border-t border-rose-100">
                 @csrf
 
                 <div class="flex gap-2 items-end">
@@ -77,7 +80,7 @@
                             name="body"
                             rows="1"
                             maxlength="500"
-                            class="w-full resize-none rounded-2xl border border-rose-200 focus:border-rose-400 focus:ring-rose-400 text-sm px-4 py-3"
+                            class="w-full resize-none rounded-2xl border border-rose-200 focus:border-rose-400 focus:ring-rose-400 text-base px-4 py-3"
                             placeholder="Digite sua mensagem… (Enter envia • Shift+Enter quebra linha)"></textarea>
 
                         <div class="mt-1 flex items-center justify-between text-xs text-gray-400 px-1">

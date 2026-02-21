@@ -48,44 +48,58 @@
                     </div>
 
                     @php
-                    $photos = $u->photos ?? collect();
-                    $main = $photos->first();
+                        $photos = $u->photos ?? collect();
+                        // gera array de URLs (pra usar tanto no HTML quanto no JS)
+                        $photoUrls = $photos->map(fn($p) => asset('storage/'.$p->path))->values();
+                        $mainUrl = $photoUrls->first();
                     @endphp
 
-                    {{-- Foto principal --}}
+                    {{-- Foto principal (clicável) --}}
                     <div class="rounded-2xl overflow-hidden ring-1 ring-rose-100 bg-gradient-to-br from-rose-100 to-pink-100">
-                        @if($main)
-                        <img src="{{ asset('storage/'.$main->path) }}"
-                            alt="Foto de {{ $u->username }}"
-                            class="w-full h-[280px] sm:h-[360px] object-cover">
+                        @if($mainUrl)
+                            <button type="button"
+                                class="w-full block focus:outline-none"
+                                data-lb
+                                data-index="0"
+                                data-src="{{ $mainUrl }}"
+                                aria-label="Abrir foto principal de {{ $u->username }}">
+                                <img src="{{ $mainUrl }}"
+                                    alt="Foto de {{ $u->username }}"
+                                    class="w-full h-[280px] sm:h-[360px] object-cover hover:opacity-95 transition">
+                            </button>
                         @else
-                        <div class="w-full h-[280px] sm:h-[360px] flex items-center justify-center">
-                            <div class="text-center">
-                                <div class="mx-auto h-16 w-16 rounded-full bg-gradient-to-br from-rose-400 to-pink-500 flex items-center justify-center text-white font-extrabold text-2xl">
-                                    {{ strtoupper(substr($u->username, 0, 1)) }}
-                                </div>
-                                <div class="mt-3 text-sm text-gray-700 font-semibold">
-                                    Ainda sem fotos 😅
-                                </div>
-                                <div class="text-xs text-gray-500">
-                                    (mas já já a gente liga o upload premium)
+                            <div class="w-full h-[280px] sm:h-[360px] flex items-center justify-center">
+                                <div class="text-center">
+                                    <div class="mx-auto h-16 w-16 rounded-full bg-gradient-to-br from-rose-400 to-pink-500 flex items-center justify-center text-white font-extrabold text-2xl">
+                                        {{ strtoupper(substr($u->username, 0, 1)) }}
+                                    </div>
+                                    <div class="mt-3 text-sm text-gray-700 font-semibold">
+                                        Ainda sem fotos 😅
+                                    </div>
+                                    <div class="text-xs text-gray-500">
+                                        (mas já já a gente liga o upload premium)
+                                    </div>
                                 </div>
                             </div>
-                        </div>
                         @endif
                     </div>
 
-                    {{-- Thumbs --}}
-                    @if($photos->count() > 1)
-                    <div class="mt-4 grid grid-cols-5 gap-2">
-                        @foreach($photos->take(5) as $p)
-                        <div class="aspect-square rounded-xl overflow-hidden ring-1 ring-rose-100 bg-rose-50">
-                            <img src="{{ asset('storage/'.$p->path) }}"
-                                alt="Foto"
-                                class="w-full h-full object-cover">
+                    {{-- Thumbs (clicáveis) --}}
+                    @if($photoUrls->count() > 1)
+                        <div class="mt-4 grid grid-cols-5 gap-2">
+                            @foreach($photoUrls->skip(1)->take(4) as $i => $url)
+                                <button type="button"
+                                    class="aspect-square rounded-xl overflow-hidden ring-1 ring-rose-100 bg-rose-50 hover:ring-rose-200 focus:outline-none"
+                                    data-lb
+                                    data-index="{{ $i }}"
+                                    data-src="{{ $url }}"
+                                    aria-label="Abrir foto {{ $i + 1 }} de {{ $u->username }}">
+                                    <img src="{{ $url }}"
+                                        alt="Foto {{ $i + 1 }}"
+                                        class="w-full h-full object-cover hover:opacity-95 transition">
+                                </button>
+                            @endforeach
                         </div>
-                        @endforeach
-                    </div>
                     @endif
                 </div>
 
@@ -125,19 +139,20 @@
                         @else
                         <a href="{{ route('chat.withUser', $u->username) }}"
                             class="mt-4 inline-flex items-center gap-2 text-sm font-bold text-white
-                        bg-gradient-to-r from-rose-500 to-pink-500
-                        px-3 py-1.5 rounded-full shadow">
-                            💬 Mandar mensagem</a>
+                                   bg-gradient-to-r from-rose-500 to-pink-500
+                                   px-3 py-1.5 rounded-full shadow hover:opacity-95">
+                            💬 Conversar
+                        </a>
 
-                            <div class="mt-3 text-xs text-gray-500">
-                                Dica: conversa curta, simpática e sem textão… (por enquanto 😄)
-                            </div>
-                            @endif
+                        <div class="mt-3 text-xs text-gray-500">
+                            Dica: conversa curta, simpática e sem textão… (por enquanto 😄)
+                        </div>
+                        @endif
                     </div>
                 </div>
             </div>
 
-            {{-- Seção “Características” (já deixa pronto pra expandir) --}}
+            {{-- Seção “Características” --}}
             <div class="bg-white rounded-2xl shadow p-5">
                 <div class="flex items-center justify-between">
                     <h3 class="font-extrabold text-gray-900">Características 📌</h3>
@@ -170,4 +185,106 @@
 
         </div>
     </div>
+
+    {{-- LIGHTBOX --}}
+    <div id="lightbox" class="fixed inset-0 z-[9999] hidden" aria-hidden="true">
+        <div data-lb-close class="absolute inset-0 bg-black/70"></div>
+
+        <div class="relative h-full w-full flex items-center justify-center p-4 sm:p-6">
+            <button type="button" data-lb-close
+                class="absolute top-4 right-4 rounded-full bg-white/10 hover:bg-white/20 text-white px-3 py-2 text-sm">
+                ✕
+            </button>
+
+            <button type="button" id="lbPrev"
+                class="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2
+                       rounded-full bg-white/10 hover:bg-white/20 text-white
+                       w-10 h-10 flex items-center justify-center text-xl select-none"
+                aria-label="Foto anterior">
+                ‹
+            </button>
+
+            <figure class="relative max-w-[92vw] max-h-[85vh]">
+                <img id="lbImg" src="" alt="Foto em destaque"
+                    class="max-w-[92vw] max-h-[85vh] rounded-2xl shadow-2xl object-contain bg-black/20" />
+                <figcaption id="lbCaption" class="mt-3 text-center text-white/80 text-sm"></figcaption>
+            </figure>
+
+            <button type="button" id="lbNext"
+                class="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2
+                       rounded-full bg-white/10 hover:bg-white/20 text-white
+                       w-10 h-10 flex items-center justify-center text-xl select-none"
+                aria-label="Próxima foto">
+                ›
+            </button>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const lb = document.getElementById('lightbox');
+            if (!lb) return;
+
+            const img = document.getElementById('lbImg');
+            const cap = document.getElementById('lbCaption');
+            const btnPrev = document.getElementById('lbPrev');
+            const btnNext = document.getElementById('lbNext');
+
+            const items = Array.from(document.querySelectorAll('[data-lb]'))
+                .map(el => ({
+                    el,
+                    src: el.getAttribute('data-src'),
+                    index: parseInt(el.getAttribute('data-index') || '0', 10)
+                }))
+                .filter(x => !!x.src)
+                .sort((a, b) => a.index - b.index);
+
+            if (!items.length) return;
+
+            let current = 0;
+
+            function openAt(i) {
+                current = (i + items.length) % items.length;
+
+                img.src = items[current].src;
+                cap.textContent = `${current + 1}/${items.length}`;
+
+                lb.classList.remove('hidden');
+                lb.setAttribute('aria-hidden', 'false');
+                document.body.classList.add('overflow-hidden');
+
+                const showArrows = items.length > 1;
+                btnPrev.classList.toggle('hidden', !showArrows);
+                btnNext.classList.toggle('hidden', !showArrows);
+            }
+
+            function close() {
+                lb.classList.add('hidden');
+                lb.setAttribute('aria-hidden', 'true');
+                document.body.classList.remove('overflow-hidden');
+                img.src = '';
+            }
+
+            function prev() { openAt(current - 1); }
+            function next() { openAt(current + 1); }
+
+            items.forEach((it, idx) => {
+                it.el.addEventListener('click', () => openAt(idx));
+            });
+
+            lb.addEventListener('click', (e) => {
+                if (e.target.matches('[data-lb-close]')) close();
+            });
+
+            btnPrev.addEventListener('click', (e) => { e.stopPropagation(); prev(); });
+            btnNext.addEventListener('click', (e) => { e.stopPropagation(); next(); });
+
+            window.addEventListener('keydown', (e) => {
+                if (lb.classList.contains('hidden')) return;
+                if (e.key === 'Escape') close();
+                if (e.key === 'ArrowLeft') prev();
+                if (e.key === 'ArrowRight') next();
+            });
+        })();
+    </script>
 </x-app-layout>
