@@ -31,10 +31,16 @@
         @endif
 
         <!-- Page Content -->
-        <main class="py-8">
+        <main class="flex-grow" style="min-height: 100vh;">
             {{ $slot }}
         </main>
+
+        <footer class="text-center text-sm text-gray-700 my-8">
+            Todos os direitos reservados® • VipRomance {{ date('Y') }} • 😎
+        </footer>
+
     </div>
+
 </body>
 
 </html>

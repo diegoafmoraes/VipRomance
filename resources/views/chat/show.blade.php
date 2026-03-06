@@ -14,7 +14,7 @@
     </x-slot>
 
     {{-- container mais largo (max-w-8x1 não existe; use 7xl) --}}
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto px-8 sm:px-6 lg:px-8 my-6">
         <div class="bg-white rounded-2xl shadow border border-rose-100 overflow-hidden">
 
             {{-- lista --}}

@@ -33,7 +33,7 @@
         </div>
     </x-slot>
 
-    <div class="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-white">
+    <div class="w-full min-h-[calc(100vh-64px)] bg-gradient-to-br from-rose-80 via-pink-80 to-white">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
 
             {{-- Topo: Fotos + CTA --}}
@@ -48,58 +48,58 @@
                     </div>
 
                     @php
-                        $photos = $u->photos ?? collect();
-                        // gera array de URLs (pra usar tanto no HTML quanto no JS)
-                        $photoUrls = $photos->map(fn($p) => asset('storage/'.$p->path))->values();
-                        $mainUrl = $photoUrls->first();
+                    $photos = $u->photos ?? collect();
+                    // gera array de URLs (pra usar tanto no HTML quanto no JS)
+                    $photoUrls = $photos->map(fn($p) => asset('storage/'.$p->path))->values();
+                    $mainUrl = $photoUrls->first();
                     @endphp
 
                     {{-- Foto principal (clicável) --}}
                     <div class="rounded-2xl overflow-hidden ring-1 ring-rose-100 bg-gradient-to-br from-rose-100 to-pink-100">
                         @if($mainUrl)
-                            <button type="button"
-                                class="w-full block focus:outline-none"
-                                data-lb
-                                data-index="0"
-                                data-src="{{ $mainUrl }}"
-                                aria-label="Abrir foto principal de {{ $u->username }}">
-                                <img src="{{ $mainUrl }}"
-                                    alt="Foto de {{ $u->username }}"
-                                    class="w-full h-[280px] sm:h-[360px] object-cover hover:opacity-95 transition">
-                            </button>
+                        <button type="button"
+                            class="w-full block focus:outline-none"
+                            data-lb
+                            data-index="0"
+                            data-src="{{ $mainUrl }}"
+                            aria-label="Abrir foto principal de {{ $u->username }}">
+                            <img src="{{ $mainUrl }}"
+                                alt="Foto de {{ $u->username }}"
+                                class="w-full h-[280px] sm:h-[360px] object-cover hover:opacity-95 transition">
+                        </button>
                         @else
-                            <div class="w-full h-[280px] sm:h-[360px] flex items-center justify-center">
-                                <div class="text-center">
-                                    <div class="mx-auto h-16 w-16 rounded-full bg-gradient-to-br from-rose-400 to-pink-500 flex items-center justify-center text-white font-extrabold text-2xl">
-                                        {{ strtoupper(substr($u->username, 0, 1)) }}
-                                    </div>
-                                    <div class="mt-3 text-sm text-gray-700 font-semibold">
-                                        Ainda sem fotos 😅
-                                    </div>
-                                    <div class="text-xs text-gray-500">
-                                        (mas já já a gente liga o upload premium)
-                                    </div>
+                        <div class="w-full h-[280px] sm:h-[360px] flex items-center justify-center">
+                            <div class="text-center">
+                                <div class="mx-auto h-16 w-16 rounded-full bg-gradient-to-br from-rose-400 to-pink-500 flex items-center justify-center text-white font-extrabold text-2xl">
+                                    {{ strtoupper(substr($u->username, 0, 1)) }}
+                                </div>
+                                <div class="mt-3 text-sm text-gray-700 font-semibold">
+                                    Ainda sem fotos 😅
+                                </div>
+                                <div class="text-xs text-gray-500">
+                                    (mas já já a gente liga o upload premium)
                                 </div>
                             </div>
+                        </div>
                         @endif
                     </div>
 
                     {{-- Thumbs (clicáveis) --}}
                     @if($photoUrls->count() > 1)
-                        <div class="mt-4 grid grid-cols-5 gap-2">
-                            @foreach($photoUrls->skip(1)->take(4) as $i => $url)
-                                <button type="button"
-                                    class="aspect-square rounded-xl overflow-hidden ring-1 ring-rose-100 bg-rose-50 hover:ring-rose-200 focus:outline-none"
-                                    data-lb
-                                    data-index="{{ $i }}"
-                                    data-src="{{ $url }}"
-                                    aria-label="Abrir foto {{ $i + 1 }} de {{ $u->username }}">
-                                    <img src="{{ $url }}"
-                                        alt="Foto {{ $i + 1 }}"
-                                        class="w-full h-full object-cover hover:opacity-95 transition">
-                                </button>
-                            @endforeach
-                        </div>
+                    <div class="mt-4 grid grid-cols-5 gap-2">
+                        @foreach($photoUrls->skip(1)->take(4) as $i => $url)
+                        <button type="button"
+                            class="aspect-square rounded-xl overflow-hidden ring-1 ring-rose-100 bg-rose-50 hover:ring-rose-200 focus:outline-none"
+                            data-lb
+                            data-index="{{ $i }}"
+                            data-src="{{ $url }}"
+                            aria-label="Abrir foto {{ $i + 1 }} de {{ $u->username }}">
+                            <img src="{{ $url }}"
+                                alt="Foto {{ $i + 1 }}"
+                                class="w-full h-full object-cover hover:opacity-95 transition">
+                        </button>
+                        @endforeach
+                    </div>
                     @endif
                 </div>
 
@@ -265,8 +265,13 @@
                 img.src = '';
             }
 
-            function prev() { openAt(current - 1); }
-            function next() { openAt(current + 1); }
+            function prev() {
+                openAt(current - 1);
+            }
+
+            function next() {
+                openAt(current + 1);
+            }
 
             items.forEach((it, idx) => {
                 it.el.addEventListener('click', () => openAt(idx));
@@ -276,8 +281,14 @@
                 if (e.target.matches('[data-lb-close]')) close();
             });
 
-            btnPrev.addEventListener('click', (e) => { e.stopPropagation(); prev(); });
-            btnNext.addEventListener('click', (e) => { e.stopPropagation(); next(); });
+            btnPrev.addEventListener('click', (e) => {
+                e.stopPropagation();
+                prev();
+            });
+            btnNext.addEventListener('click', (e) => {
+                e.stopPropagation();
+                next();
+            });
 
             window.addEventListener('keydown', (e) => {
                 if (lb.classList.contains('hidden')) return;

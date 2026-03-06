@@ -9,9 +9,15 @@ use Illuminate\Support\Facades\Auth;
 
 class MyProfileController extends Controller
 {
+    /**
+     * Carrega a view de TABs e permite edit
+     *
+     * @param Request $request
+     * @return void
+     */
     public function edit(Request $request)
     {
-        $me = auth()->user()->load('photos', 'preferences');
+        $me = auth()->user()->load('photos');
         $photos = $me->photos ?? collect();
 
         $optionsByCategory = PreferenceOption::query()
@@ -21,7 +27,8 @@ class MyProfileController extends Controller
             ->get()
             ->groupBy('category');
 
-        $selected = collect($me->preferences ?? [])
+        $selected = $me->preferences()
+            ->get()
             ->map(fn($item) => $item->category . ':' . $item->key)
             ->toArray();
 

@@ -23,8 +23,10 @@ class MyProfilePhotoController extends Controller
         $user = $request->user();
 
         // Limite 7
-        if ($user->photos()->count() >= 7) {
-            return back()->withErrors('Limite de 7 fotos atingido.');
+        if ($user->photos()->count() >= 8) {
+            return back()
+                ->withErrors('Limite de 8 fotos atingido.')
+                ->with('activeTab', 'fotos');
         }
 
         $request->validate([
@@ -43,7 +45,9 @@ class MyProfilePhotoController extends Controller
             'is_private' => 0,
         ]);
 
-        return back()->with('status', 'Foto enviada 📸');
+        return back()
+            ->with('status', 'Foto enviada 📸')
+            ->with('activeTab', 'fotos');
     }
 
     public function destroy(Photo $photo)
@@ -54,7 +58,9 @@ class MyProfilePhotoController extends Controller
 
         $photo->delete();
 
-        return back()->with('status', 'Foto removida ❌');
+        return back()
+            ->with('status', 'Foto removida ❌')
+            ->with('activeTab', 'fotos');
     }
 
     public function primary(Photo $photo)
@@ -68,6 +74,8 @@ class MyProfilePhotoController extends Controller
 
         $photo->update(['is_primary' => 1]);
 
-        return back()->with('status', 'Foto principal atualizada ⭐');
+        return back()
+            ->with('status', 'Foto principal atualizada ⭐')
+            ->with('activeTab', 'fotos');
     }
 }

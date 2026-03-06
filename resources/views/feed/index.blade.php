@@ -6,7 +6,7 @@
                 <a href="{{ route('myprofile.edit') }}"
                     class="inline-flex items-center gap-2 rounded-full bg-white/70 px-3 py-1 text-xs font-semibold
           border border-rose-100 hover:border-rose-200">
-                    💘 Meu Perfil 
+                    💘 Meu Perfil
                 </a>
                 <a href="{{ route('chat.index') }}"
                     class="inline-flex items-center gap-2 rounded-full bg-white/70 px-3 py-1 text-xs font-semibold
@@ -28,7 +28,7 @@
         </div>
     </x-slot>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 my-4">
         {{-- Carrossel aleatório --}}
         <div class="bg-white rounded-2xl shadow p-5">
             <div class="flex items-center justify-between mb-3">

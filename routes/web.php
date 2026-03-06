@@ -50,7 +50,7 @@ Route::middleware('auth')->group(function () {
     Route::put('/meu-perfil/fotos/{photo}/primary', [PhotoController::class, 'setPrimary'])->name('myprofile.photos.primary');
     Route::delete('/meu-perfil/fotos/{photo}', [PhotoController::class, 'destroy'])->name('myprofile.photos.destroy');
     Route::put('/meu-perfil/preferencias', [MyProfileController::class, 'updatePreferences'])
-    ->name('myprofile.preferences.update');
+        ->name('myprofile.preferences.update');
 
     // perfil público
     Route::get('/u/{username}', [PublicProfileController::class, 'show'])->name('profile.public');

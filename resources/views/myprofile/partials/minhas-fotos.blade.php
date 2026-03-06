@@ -33,11 +33,11 @@ $photoUrls = $photos->map(fn($p) => $p->url)->values();
         <div class="flex items-center justify-between mb-3">
             <div>
                 <div class="font-semibold text-gray-900">Adicionar foto</div>
-                <div class="text-xs text-gray-500">Primeira foto vira perfil automaticamente. Limite 7.</div>
+                <div class="text-xs text-gray-500">Primeira foto vira perfil automaticamente. Limite 8 fotos.</div>
             </div>
 
             <div class="text-xs text-gray-500">
-                <span class="font-semibold">{{ $photos->count() }}</span> / 7
+                <span class="font-semibold">{{ $photos->count() }}</span> / 8
             </div>
         </div>
 

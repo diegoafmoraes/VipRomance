@@ -73,7 +73,7 @@ class User extends Authenticatable
      */
     public function photos()
     {
-        return $this->hasMany(Photo::class);
+        return $this->hasMany(\App\Models\Photo::class, 'user_id', 'id');
     }
 
     public function primaryPhoto()
@@ -100,6 +100,6 @@ class User extends Authenticatable
      */
     public function preferences()
     {
-        return $this->hasMany(\App\Models\UserPreference::class, 'user_id');
+        return $this->hasMany(\App\Models\UserPreference::class, 'user_id', 'id');
     }
 }

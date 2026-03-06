@@ -6,7 +6,7 @@ $me = $me ?? auth()->user();
 {{-- Card: dados travados --}}
 <div class="bg-white rounded-2xl shadow p-6 border border-rose-100">
     <div class="flex items-center justify-between mb-4">
-        <h3 class="font-semibold text-gray-800">Dados de cadastro (travados) 🔒</h3>
+        <h3 class="font-semibold text-gray-800">Dados de cadastro <!--(travados)--> 🔒</h3>
         <span class="text-xs text-gray-500">por enquanto não editável</span>
     </div>
 
@@ -157,17 +157,20 @@ $me = $me ?? auth()->user();
             </div>
         </div>
 
-            {{-- Botões --}}
-            <div class="mt-6 flex items-center justify-end gap-3">
-                <a href="{{ route('home') }}"
-                    class="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">
-                    ← Voltar
-                </a>
+        {{-- Botões --}}
+        <div class="mt-6 flex items-center justify-end gap-3">
+            <a href="{{ route('home') }}"
+                class="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">
+                ← Voltar
+            </a>
 
-                <button type="submit"
+            <div class="pt-2">
+                <button
+                    type="submit"
                     class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-rose-500 to-pink-500 px-5 py-2.5 text-sm font-bold text-white shadow hover:opacity-90 transition">
                     💾 Salvar perfil
                 </button>
+            </div>
         </div>
     </div>
 </form>
