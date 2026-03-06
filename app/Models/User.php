@@ -92,4 +92,14 @@ class User extends Authenticatable
         return $this->hasOne(Photo::class)
             ->where('is_primary', 1);
     }
+
+    /**
+     * Relacionamento de tabelas
+     *
+     * @return void
+     */
+    public function preferences()
+    {
+        return $this->hasMany(\App\Models\UserPreference::class, 'user_id');
+    }
 }
