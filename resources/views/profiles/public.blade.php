@@ -33,7 +33,7 @@
         </div>
     </x-slot>
 
-    <div class="w-full min-h-[calc(100vh-64px)] bg-gradient-to-br from-rose-80 via-pink-80 to-white">
+    <div class="w-full min-h-[calc(100vh-64px)] bg-gradient-to-br from-rose-100 via-pink-100 to-white">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
 
             {{-- Topo: Fotos + CTA --}}
@@ -43,13 +43,12 @@
                     <div class="flex items-center justify-between mb-4">
                         <h3 class="font-extrabold text-gray-900">Fotos 📸</h3>
                         <span class="text-xs text-gray-500">
-                            {{ $u->photos?->count() ?? 0 }}/7
+                            {{ $u->photos?->count() ?? 0 }}/8
                         </span>
                     </div>
 
                     @php
                     $photos = $u->photos ?? collect();
-                    // gera array de URLs (pra usar tanto no HTML quanto no JS)
                     $photoUrls = $photos->map(fn($p) => asset('storage/'.$p->path))->values();
                     $mainUrl = $photoUrls->first();
                     @endphp
@@ -91,11 +90,11 @@
                         <button type="button"
                             class="aspect-square rounded-xl overflow-hidden ring-1 ring-rose-100 bg-rose-50 hover:ring-rose-200 focus:outline-none"
                             data-lb
-                            data-index="{{ $i }}"
+                            data-index="{{ $i + 1 }}"
                             data-src="{{ $url }}"
-                            aria-label="Abrir foto {{ $i + 1 }} de {{ $u->username }}">
+                            aria-label="Abrir foto {{ $i + 2 }} de {{ $u->username }}">
                             <img src="{{ $url }}"
-                                alt="Foto {{ $i + 1 }}"
+                                alt="Foto {{ $i + 2 }}"
                                 class="w-full h-full object-cover hover:opacity-95 transition">
                         </button>
                         @endforeach
@@ -111,21 +110,48 @@
                         {{ $u->bio ?: 'Sem bio ainda… mas eu aposto que essa pessoa é interessante 😄' }}
                     </div>
 
-                    <div class="mt-4 flex flex-wrap gap-2 text-xs">
+                    {{-- Resumo lateral das características --}}
+                    <div class="mt-5 space-y-2 text-sm">
                         @if($u->hair_color)
-                        <span class="rounded-full bg-rose-50 text-rose-700 px-2 py-1 font-semibold">{{ $u->hair_color }}</span>
+                        <div class="flex items-start gap-2">
+                            <span class="font-semibold text-rose-700 min-w-[110px]">Cabelos:</span>
+                            <span class="text-gray-700">{{ $u->hair_color }}</span>
+                        </div>
                         @endif
+
                         @if($u->eye_color)
-                        <span class="rounded-full bg-rose-50 text-rose-700 px-2 py-1 font-semibold">{{ $u->eye_color }}</span>
+                        <div class="flex items-start gap-2">
+                            <span class="font-semibold text-rose-700 min-w-[110px]">Cor dos olhos:</span>
+                            <span class="text-gray-700">{{ $u->eye_color }}</span>
+                        </div>
                         @endif
+
                         @if($u->height_cm)
-                        <span class="rounded-full bg-gray-100 px-2 py-1 font-semibold">{{ $u->height_cm }}cm</span>
+                        <div class="flex items-start gap-2">
+                            <span class="font-semibold text-rose-700 min-w-[110px]">Altura:</span>
+                            <span class="text-gray-700">{{ $u->height_cm }} cm</span>
+                        </div>
                         @endif
+
                         @if($u->weight_kg)
-                        <span class="rounded-full bg-gray-100 px-2 py-1 font-semibold">{{ $u->weight_kg }}kg</span>
+                        <div class="flex items-start gap-2">
+                            <span class="font-semibold text-rose-700 min-w-[110px]">Peso:</span>
+                            <span class="text-gray-700">{{ $u->weight_kg }} kg</span>
+                        </div>
                         @endif
+
                         @if($u->body_type)
-                        <span class="rounded-full bg-gray-100 px-2 py-1 font-semibold">{{ $u->body_type }}</span>
+                        <div class="flex items-start gap-2">
+                            <span class="font-semibold text-rose-700 min-w-[110px]">Tipo físico:</span>
+                            <span class="text-gray-700">{{ $u->body_type }}</span>
+                        </div>
+                        @endif
+
+                        @if($u->marital_status)
+                        <div class="flex items-start gap-2">
+                            <span class="font-semibold text-rose-700 min-w-[110px]">Estado Civil:</span>
+                            <span class="text-gray-700">{{ $u->marital_status }}</span>
+                        </div>
                         @endif
                     </div>
 
@@ -139,20 +165,89 @@
                         @else
                         <a href="{{ route('chat.withUser', $u->username) }}"
                             class="mt-4 inline-flex items-center gap-2 text-sm font-bold text-white
-                                   bg-gradient-to-r from-rose-500 to-pink-500
-                                   px-3 py-1.5 rounded-full shadow hover:opacity-95">
+                                       bg-gradient-to-r from-rose-500 to-pink-500
+                                       px-3 py-1.5 rounded-full shadow hover:opacity-95">
                             💬 Conversar
                         </a>
 
                         <div class="mt-3 text-xs text-gray-500">
-                            Dica: conversa curta, simpática e sem textão… (por enquanto 😄)
+                            <!-- Dica: conversa curta, simpática e sem textão… (por enquanto 😄) -->
                         </div>
                         @endif
                     </div>
                 </div>
             </div>
 
-            {{-- Seção “Características” --}}
+            {{-- Preferências públicas --}}
+            <div class="bg-white rounded-2xl shadow p-5">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-extrabold text-gray-900">Preferências 📌</h3>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {{-- Aberto a --}}
+                    <div class="bg-white rounded-2xl shadow p-5 border border-rose-100">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="font-extrabold text-gray-900">🔥 Aberto a</h3>
+                            <span class="text-xs text-gray-500">o que topa explorar</span>
+                        </div>
+
+                        @if(isset($publicPrefs['open_to']) && $publicPrefs['open_to']->count())
+                        <div class="flex flex-wrap gap-2">
+                            @foreach($publicPrefs['open_to'] as $item)
+                            <span class="rounded-full bg-rose-50 text-rose-700 px-3 py-1 text-xs font-semibold">
+                                {{ $item }}
+                            </span>
+                            @endforeach
+                        </div>
+                        @else
+                        <div class="text-sm text-gray-400">Ainda não informado.</div>
+                        @endif
+                    </div>
+
+                    {{-- Preferências --}}
+                    <div class="bg-white rounded-2xl shadow p-5 border border-rose-100">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="font-extrabold text-gray-900">💖 Preferências</h3>
+                            <span class="text-xs text-gray-500">tipo de conexão</span>
+                        </div>
+
+                        @if(isset($publicPrefs['preferences']) && $publicPrefs['preferences']->count())
+                        <div class="flex flex-wrap gap-2">
+                            @foreach($publicPrefs['preferences'] as $item)
+                            <span class="rounded-full bg-pink-50 text-pink-700 px-3 py-1 text-xs font-semibold">
+                                {{ $item }}
+                            </span>
+                            @endforeach
+                        </div>
+                        @else
+                        <div class="text-sm text-gray-400">Ainda não informado.</div>
+                        @endif
+                    </div>
+
+                    {{-- Personalidade --}}
+                    <div class="bg-white rounded-2xl shadow p-5 border border-rose-100">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="font-extrabold text-gray-900">✨ Personalidade</h3>
+                            <span class="text-xs text-gray-500">traços marcantes</span>
+                        </div>
+
+                        @if(isset($publicPrefs['personality']) && $publicPrefs['personality']->count())
+                        <div class="flex flex-wrap gap-2">
+                            @foreach($publicPrefs['personality'] as $item)
+                            <span class="rounded-full bg-violet-50 text-violet-700 px-3 py-1 text-xs font-semibold">
+                                {{ $item }}
+                            </span>
+                            @endforeach
+                        </div>
+                        @else
+                        <div class="text-sm text-gray-400">Ainda não informado.</div>
+                        @endif
+                    </div>
+                </div>
+            </div>
+
+            <!-- {{-- Seção “Características” --}}
             <div class="bg-white rounded-2xl shadow p-5">
                 <div class="flex items-center justify-between">
                     <h3 class="font-extrabold text-gray-900">Características 📌</h3>
@@ -164,24 +259,28 @@
                         <div class="text-xs text-gray-500">Cabelos</div>
                         <div class="font-extrabold text-rose-700">{{ $u->hair_color ?: '—' }}</div>
                     </div>
+
                     <div class="rounded-xl bg-rose-50 p-3">
                         <div class="text-xs text-gray-500">Olhos</div>
                         <div class="font-extrabold text-rose-700">{{ $u->eye_color ?: '—' }}</div>
                     </div>
+
                     <div class="rounded-xl bg-gray-100 p-3">
                         <div class="text-xs text-gray-500">Altura</div>
                         <div class="font-extrabold text-gray-800">{{ $u->height_cm ? $u->height_cm.'cm' : '—' }}</div>
                     </div>
+
                     <div class="rounded-xl bg-gray-100 p-3">
                         <div class="text-xs text-gray-500">Peso</div>
                         <div class="font-extrabold text-gray-800">{{ $u->weight_kg ? $u->weight_kg.'kg' : '—' }}</div>
                     </div>
+
                     <div class="rounded-xl bg-gray-100 p-3">
                         <div class="text-xs text-gray-500">Biotipo</div>
                         <div class="font-extrabold text-gray-800">{{ $u->body_type ?: '—' }}</div>
                     </div>
                 </div>
-            </div>
+            </div> -->
 
         </div>
     </div>
@@ -285,6 +384,7 @@
                 e.stopPropagation();
                 prev();
             });
+
             btnNext.addEventListener('click', (e) => {
                 e.stopPropagation();
                 next();

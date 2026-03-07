@@ -46,17 +46,18 @@ class MyProfileController extends Controller
 
         // sexo e buscando travados: não entram aqui
         $data = $request->validate([
-            'bio'        => ['nullable', 'string', 'max:500'],
-            'city'       => ['nullable', 'string', 'max:80'],
-            'state'      => ['nullable', 'string', 'max:2'],
+            'bio'           => ['nullable', 'string', 'max:500'],
+            'city'          => ['nullable', 'string', 'max:80'],
+            'state'         => ['nullable', 'string', 'max:2'],
 
-            'hair_color' => ['nullable', 'in:LOIRO,CASTANHO,PRETO,RUIVO,GRISALHO,CARECA'],
-            'eye_color'  => ['nullable', 'in:AZUL,CASTANHO,CINZA,MEL,VERDE'],
+            'hair_color'    => ['nullable', 'in:LOIRO,CASTANHO,PRETO,RUIVO,GRISALHO,CARECA'],
+            'eye_color'     => ['nullable', 'in:AZUL,CASTANHO,CINZA,MEL,VERDE'],
 
-            'height_cm'  => ['nullable', 'integer', 'min:140', 'max:220'],
-            'weight_kg'  => ['nullable', 'integer', 'min:40', 'max:200'],
+            'height_cm'     => ['nullable', 'integer', 'min:140', 'max:220'],
+            'weight_kg'     => ['nullable', 'integer', 'min:40', 'max:200'],
 
-            'body_type'  => ['nullable', 'in:NORMAL,MAGRO,SARADO,MUSCULOSO,FOFINHO,ELEGANTE,SENSUAL'],
+            'body_type'       => ['nullable', 'in:NORMAL,MAGRO,SARADO,MUSCULOSO,FOFINHO,ELEGANTE,SENSUAL'],
+            'marital_status'  => ['nullable', 'in:MANTER SIGILO,SOLTEIRO/A,AMIZADE COLORIDA,COM COMPANHEIRO/A,UNIÃO ESTÁVEL,CASADO/A,DIVORCIADO/A,VIÚVO/A'],
         ]);
 
         $user->fill($data)->save();

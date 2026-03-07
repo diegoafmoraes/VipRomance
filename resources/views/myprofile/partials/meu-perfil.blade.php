@@ -135,6 +135,22 @@ $me = $me ?? auth()->user();
                 </select>
             </div>
 
+            {{-- Body type --}}
+            <div>
+                <label for="marital_status" class="block text-sm font-medium text-gray-700 mb-1">Estado Civil</label>
+                @php
+                $ms = ['MANTER SIGILO','SOLTEIRO/A','AMIZADE COLORIDA','COM COMPANHEIRO/A','UNIÃO ESTÁVEL','CASADO/A','DIVORCIADO/A','VIÚVO/A'];
+                $msOld = old('marital_status', $me->marital_status);
+                @endphp
+                <select id="marital_status" name="marital_status"
+                    class="w-full rounded-xl border border-gray-200 focus:border-rose-300 focus:ring-rose-200 shadow-sm">
+                    <option value="">— selecione —</option>
+                    @foreach($ms as $ms)
+                    <option value="{{ $ms }}" @selected($msOld===$ms)>{{ $ms }}</option>
+                    @endforeach
+                </select>
+            </div>
+
             {{-- Cidade/Estado --}}
             <div class="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
