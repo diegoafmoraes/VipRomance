@@ -15,30 +15,28 @@ use Illuminate\View\View;
 
 class RegisteredUserController extends Controller
 {
-    /**
-     * Display the registration view.
-     */
     public function create(): View
     {
         return view('auth.register');
     }
 
-    /**
-     * Handle an incoming registration request.
-     *
-     * @throws \Illuminate\Validation\ValidationException
-     */
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
+            'name'     => ['required', 'string', 'max:255'],
+            'username' => ['required', 'string', 'max:50', 'alpha_dash', 'unique:users,username'],
+            'email'    => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
+            'sex'      => ['required', 'in:M,F'],
+            'seeking'  => ['required', 'in:M,F'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
         $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
+            'name'     => $request->name,
+            'username' => $request->username,
+            'email'    => $request->email,
+            'sex'      => $request->sex,
+            'seeking'  => $request->seeking,
             'password' => Hash::make($request->password),
         ]);
 

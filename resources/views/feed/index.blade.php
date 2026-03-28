@@ -149,9 +149,10 @@
                         </span>
                         @endif
 
+                        Teste {{ $u->weight_kg  }}
                         @if($u->weight_kg)
                         <span class="rounded-full bg-gray-100 px-2 py-1">
-                            {{ $u->weight_kg }}kg
+                            {{ $u->weight_kg }}
                         </span>
                         @endif
 
