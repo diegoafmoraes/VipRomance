@@ -1,3 +1,11 @@
+<style type="text/css">
+    .bolinhas {
+        list-style-type: square;
+        margin-left: 5%;
+        padding-right: -10px;
+    }
+</style>
+
 <x-app-layout>
     <x-slot name="header">
         <div class="flex items-center justify-between gap-4">
@@ -181,7 +189,7 @@
             {{-- Preferências públicas --}}
             <div class="bg-white rounded-2xl shadow p-5">
                 <div class="flex items-center justify-between">
-                    <h3 class="font-extrabold text-gray-900">Preferências 📌</h3>
+                    <h3 class="font-extrabold text-gray-900">Características 📌</h3>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -194,11 +202,13 @@
 
                         @if(isset($publicPrefs['open_to']) && $publicPrefs['open_to']->count())
                         <div class="flex flex-wrap gap-2">
-                            @foreach($publicPrefs['open_to'] as $item)
-                            <span class="rounded-full bg-rose-50 text-rose-700 px-3 py-1 text-xs font-semibold">
-                                {{ $item }}
-                            </span>
-                            @endforeach
+                            <ul>
+                                @foreach($publicPrefs['open_to'] as $item)
+                                <!-- <span class="rounded-full bg-rose-50 text-rose-700 px-3 py-1 text-xs font-semibold"> -->
+                                <li class="bolinhas rounded-full bg-rose-50 text-rose-700 mx-5 px-1 py-1 text-sm font-semibold">{{ $item }}</li>
+                                <!-- </span> -->
+                                @endforeach
+                            </ul>
                         </div>
                         @else
                         <div class="text-sm text-gray-400">Ainda não informado.</div>
@@ -211,14 +221,15 @@
                             <h3 class="font-extrabold text-gray-900">💖 Preferências</h3>
                             <span class="text-xs text-gray-500">tipo de conexão</span>
                         </div>
-
                         @if(isset($publicPrefs['preferences']) && $publicPrefs['preferences']->count())
                         <div class="flex flex-wrap gap-2">
-                            @foreach($publicPrefs['preferences'] as $item)
-                            <span class="rounded-full bg-pink-50 text-pink-700 px-3 py-1 text-xs font-semibold">
-                                {{ $item }}
-                            </span>
-                            @endforeach
+                            <ul>
+                                @foreach($publicPrefs['preferences'] as $item)
+                                <!-- <span class="rounded-full bg-rose-50 text-rose-700 px-3 py-1 text-xs font-semibold"> -->
+                                <li class="bolinhas rounded-full bg-rose-50 text-rose-700 mx-5 px-1 py-1 text-sm font-semibold">{{ $item }}</li>
+                                <!-- </span> -->
+                                @endforeach
+                            </ul>
                         </div>
                         @else
                         <div class="text-sm text-gray-400">Ainda não informado.</div>
@@ -234,11 +245,13 @@
 
                         @if(isset($publicPrefs['personality']) && $publicPrefs['personality']->count())
                         <div class="flex flex-wrap gap-2">
-                            @foreach($publicPrefs['personality'] as $item)
-                            <span class="rounded-full bg-violet-50 text-violet-700 px-3 py-1 text-xs font-semibold">
-                                {{ $item }}
-                            </span>
-                            @endforeach
+                            <ul>
+                                @foreach($publicPrefs['personality'] as $item)
+                                <!-- <span class="rounded-full bg-rose-50 text-rose-700 px-3 py-1 text-xs font-semibold"> -->
+                                <li class="bolinhas rounded-full bg-rose-50 text-rose-700 mx-5 px-1 py-1 text-sm font-semibold">{{ $item }}</li>
+                                <!-- </span> -->
+                                @endforeach
+                            </ul>
                         </div>
                         @else
                         <div class="text-sm text-gray-400">Ainda não informado.</div>
